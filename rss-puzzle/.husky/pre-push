@@ -1,4 +1,2 @@
 cd rss-puzzle
-npm run eslint && npx validate-branch-name
-exit 1
-
+npm run lint && npx validate-branch-name
