@@ -4,6 +4,10 @@ import View from '../view';
 const loginView = new View({ tag: 'div', classList: ['login-view'] });
 const header = new View({ tag: 'h2', classList: ['header'] });
 header.view.append('Login Form');
+const validationErrors = {
+  valueMissing: 'Must not be empty',
+  patternMismatch: 'Only English letter and hyphen. First letter in uppercase.',
+};
 
 function validator(submitButton: View, ...validatedFields: View[]) {
   const validated = new Map<View, boolean>(
@@ -26,15 +30,33 @@ function validator(submitButton: View, ...validatedFields: View[]) {
     }
   }
 
-  return function validate(input: View, errorMsg: string) {
-    const inputElement = input.view as HTMLInputElement;
-    if (inputElement.validity.valueMissing) {
-      inputElement.setCustomValidity(errorMsg);
-      inputElement.reportValidity();
-      validated.set(input, false);
-    } else {
-      inputElement.setCustomValidity('');
-      validated.set(input, true);
+  return function validate(input: View, errorMsg: typeof validationErrors) {
+    const inputElement = input.view;
+    if (inputElement instanceof HTMLInputElement) {
+      const { validity } = inputElement;
+      inputElement.setCustomValidity(''); // reset customError
+      if (validity.valid) {
+        validated.set(input, true);
+      } else {
+        // defer call reportValidity
+        Promise.reject().catch(() => {
+          validated.set(input, false);
+          inputElement.reportValidity();
+        });
+        switch (!validity.valid) {
+          case validity.valueMissing:
+            inputElement.setCustomValidity(errorMsg.valueMissing);
+            break;
+          // case validity.tooShort:
+          //   inputElement.setCustomValidity(errorMsg.tooShot);
+          //   break;
+          case validity.patternMismatch:
+            inputElement.setCustomValidity(errorMsg.patternMismatch);
+            break;
+          default:
+            inputElement.setCustomValidity('');
+        }
+      }
     }
     allowSubmit();
   };
@@ -48,14 +70,18 @@ function createFormContent(): View {
   firstName.setAttributes(
     ['type', 'text'],
     ['placeholder', 'First Name'],
-    ['title', 'Must not be empty'],
-    ['required', '']
+    ['title', 'First name'],
+    ['required', ''],
+    ['pattern', '[A-Z]{1,}[a-z\\-]{0,}'],
+    ['minlength', '3']
   );
   surName.setAttributes(
     ['type', 'text'],
     ['placeholder', 'Surname'],
-    ['title', 'Must not be empty'],
-    ['required', '']
+    ['title', 'Surname'],
+    ['required', ''],
+    ['pattern', '[A-Z]{1,}[a-z\\-]{0,}'],
+    ['minlength', '4']
   );
   submit.setAttributes(
     ['type', 'submit'],
@@ -64,10 +90,10 @@ function createFormContent(): View {
   );
   const validate = validator(submit, firstName, surName);
   firstName.view.addEventListener('input', () => {
-    validate(firstName, 'This field required');
+    validate(firstName, validationErrors);
   });
   surName.view.addEventListener('input', () => {
-    validate(surName, 'This field required');
+    validate(surName, validationErrors);
   });
   loginForm.append(firstName, surName, submit);
   return loginForm;
