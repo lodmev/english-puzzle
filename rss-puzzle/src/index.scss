@@ -1,8 +1,12 @@
-*, *::after, *::before {
-    margin: 0;
-    padding: 0;
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
 }
 html {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
+body {
+  background: url('./assets/images/background.jpg') center/cover no-repeat fixed;
+}
