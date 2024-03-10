@@ -1,5 +1,6 @@
 import './login_form.scss';
 import View from '../view';
+import state from '../../controllers/state';
 
 const loginView = new View({ tag: 'div', classList: ['login-view'] });
 const header = new View({ tag: 'h2', classList: ['header'] });
@@ -30,7 +31,7 @@ function validator(submitButton: View, ...validatedFields: View[]) {
     }
   }
 
-  return function validate(input: View, errorMsg: typeof validationErrors) {
+  return function validate(input: View) {
     const inputElement = input.view;
     if (inputElement instanceof HTMLInputElement) {
       const { validity } = inputElement;
@@ -45,13 +46,13 @@ function validator(submitButton: View, ...validatedFields: View[]) {
         });
         switch (!validity.valid) {
           case validity.valueMissing:
-            inputElement.setCustomValidity(errorMsg.valueMissing);
+            inputElement.setCustomValidity(validationErrors.valueMissing);
             break;
           // case validity.tooShort:
           //   inputElement.setCustomValidity(errorMsg.tooShot);
           //   break;
           case validity.patternMismatch:
-            inputElement.setCustomValidity(errorMsg.patternMismatch);
+            inputElement.setCustomValidity(validationErrors.patternMismatch);
             break;
           default:
             inputElement.setCustomValidity('');
@@ -63,10 +64,26 @@ function validator(submitButton: View, ...validatedFields: View[]) {
 }
 
 function createFormContent(): View {
-  const loginForm = new View({ tag: 'form', classList: ['login-form'] });
-  const firstName = new View({ tag: 'input', classList: ['input'] });
-  const surName = new View({ tag: 'input', classList: ['input'] });
+  const loginForm = new View<HTMLFormElement>({
+    tag: 'form',
+    classList: ['login-form'],
+  });
+  const firstName = new View<HTMLInputElement>({
+    tag: 'input',
+    classList: ['input'],
+  });
+  const surName = new View<HTMLInputElement>({
+    tag: 'input',
+    classList: ['input'],
+  });
   const submit = new View({ tag: 'input', classList: ['input'] });
+  loginForm.view.addEventListener('submit', (event) => {
+    state.setValue({
+      firstName: firstName.view.value,
+      surName: surName.view.value,
+    });
+    event.preventDefault();
+  });
   firstName.setAttributes(
     ['type', 'text'],
     ['placeholder', 'First Name'],
@@ -90,10 +107,10 @@ function createFormContent(): View {
   );
   const validate = validator(submit, firstName, surName);
   firstName.view.addEventListener('input', () => {
-    validate(firstName, validationErrors);
+    validate(firstName);
   });
   surName.view.addEventListener('input', () => {
-    validate(surName, validationErrors);
+    validate(surName);
   });
   loginForm.append(firstName, surName, submit);
   return loginForm;

@@ -1,16 +1,17 @@
 type ViewParams = {
-  tag: string;
+  tag: keyof HTMLElementTagNameMap;
   classList: string[];
   callback?: Parameters<HTMLElement['addEventListener']>;
 };
-export default class View {
-  element: HTMLElement;
 
-  constructor(params: ViewParams | HTMLElement) {
+export default class View<T extends HTMLElement = HTMLElement> {
+  element: T;
+
+  constructor(params: ViewParams | T) {
     if (params instanceof HTMLElement) {
       this.element = params;
     } else {
-      this.element = View.createView(params);
+      this.element = View.createView<T>(params);
     }
   }
 
@@ -22,10 +23,10 @@ export default class View {
     this.element.append(...nodes.map((node) => node.view));
   }
 
-  cloneSelf(count: number, deep?: boolean): View[] {
-    const result = Array<View>(count);
+  cloneSelf(count: number, deep?: boolean): View<T>[] {
+    const result = Array<View<T>>(count);
     for (let i = 0; i < count; i += 1) {
-      result[i] = new View(this.element.cloneNode(deep) as HTMLElement);
+      result[i] = new View(this.element.cloneNode(deep) as T);
     }
     return result;
   }
@@ -49,8 +50,10 @@ export default class View {
     this.element.classList.toggle(className);
   }
 
-  static createView(params: ViewParams) {
-    const el = document.createElement(params.tag);
+  static createView<T extends HTMLElement = HTMLElement>(
+    params: ViewParams
+  ): T {
+    const el = document.createElement(params.tag) as T;
     el.classList.add(...params.classList);
     if (params.callback) {
       el.addEventListener(...params.callback);
