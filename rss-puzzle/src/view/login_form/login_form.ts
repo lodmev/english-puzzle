@@ -83,6 +83,8 @@ function createFormContent(): View {
       firstName: firstName.view.value,
       surName: surName.view.value,
     });
+    firstName.view.value = '';
+    surName.view.value = '';
     loginCompleteHandler.onLogin();
   });
   firstName.setAttributes(
@@ -116,7 +118,11 @@ function createFormContent(): View {
   loginForm.append(firstName, surName, submit);
   return loginForm;
 }
-
 loginView.append(header, createFormContent());
-export default loginView;
+
+function createLoginElement() {
+  return loginView;
+}
+export default createLoginElement;
+
 export { loginCompleteHandler };

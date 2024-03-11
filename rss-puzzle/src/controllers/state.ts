@@ -22,7 +22,12 @@ class State {
 
   setValue(params: Partial<StateStorage>) {
     this.storage = { ...params, ...this.storage };
-    window.localStorage.setItem(APP_NAME, JSON.stringify(params));
+    window.localStorage.setItem(APP_NAME, JSON.stringify(this.storage));
+  }
+
+  erase() {
+    this.storage = null;
+    window.localStorage.removeItem(APP_NAME);
   }
 
   erase() {
