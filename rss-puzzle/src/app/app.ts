@@ -34,6 +34,7 @@ export default class App {
       switchMainContent(createLoginView);
     } else {
       switchMainContent(createStartScreen);
+    }
   }
   // createViews() {
   //     this

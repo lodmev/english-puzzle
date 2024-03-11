@@ -29,10 +29,5 @@ class State {
     this.storage = null;
     window.localStorage.removeItem(APP_NAME);
   }
-
-  erase() {
-    this.storage = null;
-    window.localStorage.removeItem(APP_NAME);
-  }
 }
 export default new State();
