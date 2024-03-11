@@ -9,6 +9,9 @@ const validationErrors = {
   valueMissing: 'Must not be empty',
   patternMismatch: 'Only English letter and hyphen. First letter in uppercase.',
 };
+const loginCompleteHandler = {
+  onLogin: () => {},
+};
 
 function validator(submitButton: View, ...validatedFields: View[]) {
   const validated = new Map<View, boolean>(
@@ -48,9 +51,6 @@ function validator(submitButton: View, ...validatedFields: View[]) {
           case validity.valueMissing:
             inputElement.setCustomValidity(validationErrors.valueMissing);
             break;
-          // case validity.tooShort:
-          //   inputElement.setCustomValidity(errorMsg.tooShot);
-          //   break;
           case validity.patternMismatch:
             inputElement.setCustomValidity(validationErrors.patternMismatch);
             break;
@@ -78,11 +78,12 @@ function createFormContent(): View {
   });
   const submit = new View({ tag: 'input', classList: ['input'] });
   loginForm.view.addEventListener('submit', (event) => {
+    event.preventDefault();
     state.setValue({
       firstName: firstName.view.value,
       surName: surName.view.value,
     });
-    event.preventDefault();
+    loginCompleteHandler.onLogin();
   });
   firstName.setAttributes(
     ['type', 'text'],
@@ -118,3 +119,4 @@ function createFormContent(): View {
 
 loginView.append(header, createFormContent());
 export default loginView;
+export { loginCompleteHandler };

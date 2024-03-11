@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import './assets/fontawesome/scss/fontawesome.scss';
+@import './assets/fontawesome/scss/solid.scss';
 *,
 *::after,
 *::before {
@@ -5,7 +8,7 @@
   padding: 0;
 }
 html {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: Inter, sans-serif;
 }
 body {
   background: url('./assets/images/background.jpg') center/cover no-repeat fixed;

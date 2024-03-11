@@ -1,21 +1,37 @@
 import appState from '../controllers/state';
-import loginView from '../view/login_form/login_form';
-import mainView from '../view/main-container/main-container';
+import gameLayout from '../view/game-layout/game-layout';
+import loginView, { loginCompleteHandler } from '../view/login_form/login_form';
+import mainContainer, {
+  switchMainContent,
+} from '../view/main-container/main-container';
+import startScreen, {
+  startScreenHandlers,
+} from '../view/start_screen/start-screen';
 
 export default class App {
-  appView = mainView;
-
-  constructor() {
-    document.body.append(this.appView.view);
-  }
+  mainContainer = mainContainer;
 
   start() {
-    this.updateView();
+    this.showStart();
   }
 
-  updateView() {
+  showStart() {
+    document.body.append(this.mainContainer.view);
+    loginCompleteHandler.onLogin = () => {
+      switchMainContent(startScreen.view);
+    };
+    startScreenHandlers.onStart = () => {
+      switchMainContent(startScreen.view);
+      switchMainContent(gameLayout.view);
+    };
+    startScreenHandlers.onLogout = () => {
+      appState.erase();
+      switchMainContent(loginView.view);
+    };
     if (appState.isNew) {
-      this.appView.append(loginView);
+      switchMainContent(loginView.view);
+    } else {
+      switchMainContent(startScreen.view);
     }
   }
   // createViews() {
