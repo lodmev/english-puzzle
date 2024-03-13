@@ -1,10 +1,10 @@
 import './login_form.scss';
-import View from '../view';
 import state from '../../controllers/state';
+import { createElement, setAttributes } from '../../utils/dom_helpers';
 
-const loginView = new View({ tag: 'div', classList: ['login-view'] });
-const header = new View({ tag: 'h2', classList: ['header'] });
-header.view.append('Login Form');
+const loginView = createElement({ tag: 'div', classList: ['login-view'] });
+const header = createElement({ tag: 'h2', classList: ['header'] });
+header.append('Login Form');
 const validationErrors = {
   valueMissing: 'Must not be empty',
   patternMismatch: 'Only English letter and hyphen. First letter in uppercase.',
@@ -13,8 +13,11 @@ const loginCompleteHandler = {
   onLogin: () => {},
 };
 
-function validator(submitButton: View, ...validatedFields: View[]) {
-  const validated = new Map<View, boolean>(
+function validator(
+  submitButton: HTMLElement,
+  ...validatedFields: HTMLElement[]
+) {
+  const validated = new Map<HTMLElement, boolean>(
     validatedFields.map((value) => [value, false])
   );
   const allValid = () => {
@@ -28,14 +31,14 @@ function validator(submitButton: View, ...validatedFields: View[]) {
   };
   function allowSubmit() {
     if (allValid()) {
-      submitButton.view.removeAttribute('disabled');
+      submitButton.removeAttribute('disabled');
     } else {
-      submitButton.view.setAttribute('disabled', '');
+      submitButton.setAttribute('disabled', '');
     }
   }
 
-  return function validate(input: View) {
-    const inputElement = input.view;
+  return function validate(input: HTMLInputElement) {
+    const inputElement = input;
     if (inputElement instanceof HTMLInputElement) {
       const { validity } = inputElement;
       inputElement.setCustomValidity(''); // reset customError
@@ -63,31 +66,32 @@ function validator(submitButton: View, ...validatedFields: View[]) {
   };
 }
 
-function createFormContent(): View {
-  const loginForm = new View<HTMLFormElement>({
+function createFormContent() {
+  const loginForm = createElement({
     tag: 'form',
     classList: ['login-form'],
   });
-  const firstName = new View<HTMLInputElement>({
+  const firstName = createElement({
     tag: 'input',
     classList: ['input'],
   });
-  const surName = new View<HTMLInputElement>({
+  const surName = createElement({
     tag: 'input',
     classList: ['input'],
   });
-  const submit = new View({ tag: 'input', classList: ['input'] });
-  loginForm.view.addEventListener('submit', (event) => {
+  const submit = createElement({ tag: 'input', classList: ['input'] });
+  loginForm.addEventListener('submit', (event) => {
     event.preventDefault();
     state.setValue({
-      firstName: firstName.view.value,
-      surName: surName.view.value,
+      firstName: firstName.value,
+      surName: surName.value,
     });
-    firstName.view.value = '';
-    surName.view.value = '';
+    firstName.value = '';
+    surName.value = '';
     loginCompleteHandler.onLogin();
   });
-  firstName.setAttributes(
+  setAttributes(
+    firstName,
     ['type', 'text'],
     ['placeholder', 'First Name'],
     ['title', 'First name'],
@@ -95,7 +99,8 @@ function createFormContent(): View {
     ['pattern', '[A-Z]{1,}[a-z\\-]{0,}'],
     ['minlength', '3']
   );
-  surName.setAttributes(
+  setAttributes(
+    surName,
     ['type', 'text'],
     ['placeholder', 'Surname'],
     ['title', 'Surname'],
@@ -103,16 +108,17 @@ function createFormContent(): View {
     ['pattern', '[A-Z]{1,}[a-z\\-]{0,}'],
     ['minlength', '4']
   );
-  submit.setAttributes(
+  setAttributes(
+    submit,
     ['type', 'submit'],
     ['value', 'Login'],
     ['disabled', '']
   );
   const validate = validator(submit, firstName, surName);
-  firstName.view.addEventListener('input', () => {
+  firstName.addEventListener('input', () => {
     validate(firstName);
   });
-  surName.view.addEventListener('input', () => {
+  surName.addEventListener('input', () => {
     validate(surName);
   });
   loginForm.append(firstName, surName, submit);

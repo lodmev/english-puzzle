@@ -18,7 +18,7 @@ export default class App {
   }
 
   showStart() {
-    document.body.append(this.mainContainer.view);
+    document.body.append(this.mainContainer);
     loginCompleteHandler.onLogin = () => {
       switchMainContent(createStartScreen);
     };

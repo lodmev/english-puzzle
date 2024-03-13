@@ -1,20 +1,23 @@
 import './start-screen.scss';
 import appState from '../../controllers/state';
-import View from '../view';
+import { cloneElement, createElement } from '../../utils/dom_helpers';
 
 const startScreenHandlers = {
   onStart: () => {},
   onLogout: () => {},
 };
 function greeter() {
-  const greeterElement = new View({ tag: 'section', classList: ['greeter'] });
+  const greeterElement = createElement({
+    tag: 'section',
+    classList: ['greeter'],
+  });
   return greeterElement;
 }
-const startScreen = new View({ tag: 'div', classList: ['start-screen'] });
+const startScreen = createElement({ tag: 'div', classList: ['start-screen'] });
 const greeterElement = greeter();
 function logout() {
-  const logoutElement = new View({ tag: 'div', classList: ['logout'] });
-  const logoutButton = new View({
+  const logoutElement = createElement({ tag: 'div', classList: ['logout'] });
+  const logoutButton = createElement({
     tag: 'i',
     classList: ['button', 'fa-solid', 'fa-arrow-right-from-bracket'],
     callback: [
@@ -24,46 +27,47 @@ function logout() {
       },
     ],
   });
-  logoutButton.setAttributes(['title', 'Logout']);
+  logoutButton.setAttribute('title', 'Logout');
   logoutElement.append(logoutButton);
   return logoutElement;
 }
 
 function header() {
-  const headerElement = new View({
+  const headerElement = createElement({
     tag: 'header',
     classList: ['start-screen__header'],
   });
 
-  const gameName = new View({
+  const gameName = createElement({
     tag: 'h1',
     classList: ['game-name'],
   });
 
-  gameName.view.append('ENGLISH PUZZLE');
+  gameName.append('ENGLISH PUZZLE');
   headerElement.append(gameName);
   return headerElement;
 }
 
 function description() {
-  const descriptionElement = new View({
+  const descriptionElement = createElement({
     tag: 'section',
     classList: ['description'],
   });
-  const gameDescriptions = new View({
+  const gameDescription1 = createElement({
     tag: 'div',
     classList: ['game-description'],
-  }).cloneSelf(2);
-  gameDescriptions[0].view.append('Click on words, collect phrases.');
-  gameDescriptions[1].view.append('Select tooltips in the menu.');
-  descriptionElement.append(...gameDescriptions);
+  });
+  const gameDescription2 = cloneElement(gameDescription1);
+  gameDescription1.append('Click on words, collect phrases.');
+  gameDescription2.append('Select tooltips in the menu.');
+  descriptionElement.append(gameDescription1, gameDescription2);
   return descriptionElement;
 }
 
 function startButton() {
-  const button = new View({ tag: 'button', classList: ['start-button'] });
-  button.view.addEventListener('click', () => startScreenHandlers.onStart());
-  button.view.append('Start');
+  const button = createElement({ tag: 'button', classList: ['start-button'] });
+  button.addEventListener('click', () => startScreenHandlers.onStart());
+  button.append('Start');
   return button;
 }
 
@@ -75,7 +79,7 @@ startScreen.append(
   startButton()
 );
 function createStartScreen() {
-  greeterElement.view.innerText = `Hello, ${appState.getValue('firstName') ?? ''} ${appState.getValue('surName') ?? ''}!`;
+  greeterElement.innerText = `Hello, ${appState.getValue('firstName') ?? ''} ${appState.getValue('surName') ?? ''}!`;
   return startScreen;
 }
 export default createStartScreen;

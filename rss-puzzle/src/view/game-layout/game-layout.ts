@@ -1,6 +1,6 @@
-import View from '../view';
+import { createElement } from '../../utils/dom_helpers';
 
-const gameLayout = new View({ tag: 'main', classList: ['game-layout'] });
+const gameLayout = createElement({ tag: 'main', classList: ['game-layout'] });
 function createGameLayout() {
   return gameLayout;
 }

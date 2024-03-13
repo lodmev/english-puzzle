@@ -1,10 +1,10 @@
 import './main-container.scss';
-import View from '../view';
+import { createElement } from '../../utils/dom_helpers';
 
-const mainContainer = new View({ tag: 'div', classList: ['container'] });
+const mainContainer = createElement({ tag: 'div', classList: ['container'] });
 
-function switchMainContent(newContent: () => View) {
-  mainContainer.view.replaceChildren(newContent().view);
+function switchMainContent(newContent: () => HTMLElement) {
+  mainContainer.replaceChildren(newContent());
 }
 export default mainContainer;
 export { switchMainContent };
