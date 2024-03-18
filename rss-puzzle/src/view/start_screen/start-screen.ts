@@ -1,5 +1,5 @@
 import './start-screen.scss';
-import appState from '../../controllers/state';
+import appState from '../../controllers/app_state';
 import { cloneElement, createElement } from '../../utils/dom_helpers';
 
 const startScreenHandlers = {
@@ -79,7 +79,11 @@ startScreen.append(
   startButton()
 );
 function createStartScreen() {
-  greeterElement.innerText = `Hello, ${appState.getValue('firstName') ?? ''} ${appState.getValue('surName') ?? ''}!`;
+  const firstName = appState.getValue('firstName');
+  const surName = appState.getValue('surName');
+  if (typeof firstName === 'string' && typeof surName === 'string') {
+    greeterElement.innerText = `Hello, ${firstName} ${surName}!`;
+  }
   return startScreen;
 }
 export default createStartScreen;

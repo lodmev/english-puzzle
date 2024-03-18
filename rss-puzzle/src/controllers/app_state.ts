@@ -1,10 +1,14 @@
 type StateStorage = {
-  firstName?: string;
-  surName?: string;
+  firstName: string;
+  surName: string;
+  savedRound: {
+    level: number;
+    round: number;
+  };
 };
 const APP_NAME = 'RSS-PUZZLE';
 class State {
-  private storage: StateStorage | null;
+  private storage: Partial<StateStorage> | null;
 
   constructor() {
     this.storage = JSON.parse(
@@ -13,7 +17,7 @@ class State {
   }
 
   getValue(key: keyof StateStorage) {
-    return this.storage?.[key] ?? null;
+    return this.storage?.[key];
   }
 
   get isNew() {
@@ -21,7 +25,14 @@ class State {
   }
 
   setValue(params: Partial<StateStorage>) {
-    this.storage = { ...params, ...this.storage };
+    if (this.storage != null) {
+      Object.assign<Partial<StateStorage>, Partial<StateStorage>>(
+        this.storage,
+        params
+      );
+    } else {
+      this.storage = params;
+    }
     window.localStorage.setItem(APP_NAME, JSON.stringify(this.storage));
   }
 
@@ -30,4 +41,5 @@ class State {
     window.localStorage.removeItem(APP_NAME);
   }
 }
-export default new State();
+const appState = new State();
+export default appState;

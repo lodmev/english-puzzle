@@ -1,5 +1,5 @@
 import './login_form.scss';
-import state from '../../controllers/state';
+import state from '../../controllers/app_state';
 import { createElement, setAttributes } from '../../utils/dom_helpers';
 
 const loginView = createElement({ tag: 'div', classList: ['login-view'] });

@@ -1,0 +1,13 @@
+$bg-color: rgb(200, 200, 200);
+.source-block {
+  display: flex;
+  flex-wrap: nowrap;
+  position: relative;
+  box-shadow: 0 0 1px 4px grey;
+  background-color: $bg-color;
+  justify-content: space-between;
+}
+
+.row-piece {
+  border: 1px solid;
+}

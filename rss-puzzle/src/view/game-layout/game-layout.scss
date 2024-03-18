@@ -1,0 +1,11 @@
+.game-layout {
+  margin: 0 auto;
+  background-color: rgb(185 185 185 / 79%);
+  max-width: 1440px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}

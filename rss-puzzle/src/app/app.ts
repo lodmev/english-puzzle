@@ -1,4 +1,4 @@
-import appState from '../controllers/state';
+import appState from '../controllers/app_state';
 import createGameLayout from '../view/game-layout/game-layout';
 import createLoginView, {
   loginCompleteHandler,
