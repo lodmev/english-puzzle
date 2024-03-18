@@ -9,13 +9,21 @@ $shadow: 0 0 1px 4px grey;
     position: absolute;
     width: 100%;
     z-index: 0;
-    opacity: 0.1;
+    opacity: 0;
+    transition: all 0.7s;
+    &.visible {
+      opacity: 1;
+    }
+  }
+  &.hidden-rows .result-row {
+    opacity: 0;
   }
   .result-row {
     display: flex;
-    justify-content: center;
+    left: 1px;
     flex-wrap: nowrap;
     z-index: 10;
     position: relative;
+    transition: all 0.7s;
   }
 }

@@ -8,19 +8,29 @@ type PuzzlePiece = {
   puzzlePiece: HTMLCanvasElement;
   word: string;
 };
+export type SentencePieces = Map<number, PuzzlePiece>;
 
 export default class SourceBlock {
   private roundState: RoundState;
 
   private element = createElement({ tag: 'div', classList: 'source-block' });
 
-  private rowPieces = new Map<number, PuzzlePiece>();
+  private sentencePieces: Map<number, PuzzlePiece> = new Map<
+    number,
+    PuzzlePiece
+  >();
 
   private movedAway = new Map<HTMLCanvasElement, HTMLElement>();
 
   private fontSize: number;
 
+  checkComplete = false;
+
   moveListeners: Array<(element: HTMLCanvasElement) => void> = [];
+
+  emptySourceListeners: Array<(sentence: SentencePieces) => void> = [];
+
+  notEmptySourceListeners: Array<() => void> = [];
 
   constructor(roundState: RoundState) {
     this.roundState = roundState;
@@ -116,7 +126,7 @@ export default class SourceBlock {
         classList: 'row-piece',
       });
       pieces[index] = { puzzlePiece, word };
-      this.rowPieces.set(index, { puzzlePiece, word });
+      this.sentencePieces.set(index, { puzzlePiece, word });
     });
     return pieces;
   }
@@ -153,7 +163,7 @@ export default class SourceBlock {
   processPieces() {
     let offsetX = 0;
     const offsetY = this.roundState.rowHeight * this.roundState.currentRowIndex;
-    this.rowPieces.forEach((piece) => {
+    this.sentencePieces.forEach((piece) => {
       this.drawOnPuzzle(piece, { offsetX, offsetY });
       piece.puzzlePiece.addEventListener('click', () => {
         this.movePiece(piece.puzzlePiece);
@@ -163,9 +173,9 @@ export default class SourceBlock {
   }
 
   addPieces() {
-    const order = getRandomOrder(this.rowPieces.size);
+    const order = getRandomOrder(this.sentencePieces.size);
     for (let i = 0; i < order.length; i += 1) {
-      const puzzlePiece = this.rowPieces.get(order[i])?.puzzlePiece;
+      const puzzlePiece = this.sentencePieces.get(order[i])?.puzzlePiece;
       if (puzzlePiece !== undefined) {
         const puzzleWrapper = createElement({ tag: 'div', classList: '' });
         puzzleWrapper.style.width = `${puzzlePiece.width}px`;
@@ -182,8 +192,13 @@ export default class SourceBlock {
     let puzzleWrapper = this.movedAway.get(puzzlePiece);
     if (puzzleWrapper !== undefined) {
       // return back
+      if (this.checkComplete) {
+        return;
+      }
+      puzzlePiece.classList.remove('incorrect');
       puzzleWrapper.append(puzzlePiece);
       this.movedAway.delete(puzzlePiece);
+      this.notEmptySourceListeners.forEach((fn) => fn());
     } else {
       // move to result
       puzzleWrapper = puzzlePiece.parentElement!;
@@ -191,6 +206,9 @@ export default class SourceBlock {
       this.moveListeners.forEach((moveFunc) => {
         moveFunc(puzzlePiece);
       });
+      if (this.movedAway.size === this.sentencePieces.size) {
+        this.emptySourceListeners.forEach((fn) => fn(this.sentencePieces));
+      }
     }
   }
 }

@@ -44,4 +44,13 @@ export default class ResultBlock {
   placeToRow(element: HTMLElement) {
     this.rows[this.roundState.currentRowIndex].append(element);
   }
+
+  getCurrentRowChildren() {
+    return this.rows[this.roundState.currentRowIndex].children;
+  }
+
+  showImage() {
+    this.bgImage.classList.add('visible');
+    this.element.classList.add('hidden');
+  }
 }

@@ -1,0 +1,19 @@
+.buttons-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+}
+.button {
+  font: inherit;
+  min-width: 8rem;
+  padding: 5px 11px;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.button[disabled] {
+  cursor: auto;
+}
+.not-know-button {
+  background-color: rgb(100 59 234 / 27%);
+  color: #eee;
+}
